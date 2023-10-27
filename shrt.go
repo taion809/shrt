@@ -12,6 +12,7 @@ import (
 type Shrt struct {
 	Alphabet string
 	Cache    *redis.Client
+	cacheKey string
 
 	lock      sync.Mutex
 	pool      []string
@@ -24,13 +25,18 @@ type Shortener interface {
 	Take(size int) ([]string, error)
 }
 
-const defaultAlphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+const (
+	defaultAlphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	defaultCacheKey = "pool:ids"
+)
 
-func New() *Shrt {
+func New(size int, client *redis.Client) *Shrt {
 	return &Shrt{
 		Alphabet: defaultAlphabet,
-		pool:     make([]string, 1000),
-		poolSize: 1000,
+		Cache:    client,
+		cacheKey: defaultCacheKey,
+		pool:     make([]string, size),
+		poolSize: size,
 	}
 }
 
