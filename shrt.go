@@ -17,23 +17,28 @@ type Shortener interface {
 const defaultAlphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
 func New() *Shrt {
-	return &Shrt{}
+	return &Shrt{
+		Alphabet: defaultAlphabet,
+	}
 }
 
-func (s *Shrt) Shorten(url string) string {
-	if s.Alphabet == "" {
-		s.Alphabet = defaultAlphabet
-	}
-
-	if s.Size == 0 {
-		s.Size = 5
-	}
-
+func (s *Shrt) generate(size int) string {
 	sb := strings.Builder{}
-	sb.Grow(s.Size)
-	for i := 0; i < s.Size; i++ {
+	sb.Grow(size)
+	for i := 0; i < size; i++ {
 		sb.WriteByte(s.Alphabet[rand.Intn(len(s.Alphabet))])
 	}
 
 	return sb.String()
+}
+
+func (s *Shrt) Generate(n int) []string {
+	ids := make([]string, n)
+
+	for i := 0; i < n; i++ {
+		s := s.generate(5)
+		ids[i] = s
+	}
+
+	return ids
 }

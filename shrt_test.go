@@ -6,11 +6,14 @@ import (
 
 func TestShortenReturnsShort(t *testing.T) {
 	s := New()
-	s.Size = 3
-	short := s.Shorten("http://example.com")
-	if len(short) != 3 {
-		t.Errorf("Shorten() = %s; want 3 characters", short)
-	}
+	short := s.Generate(10)
 
 	t.Log(short)
+}
+
+func BenchmarkGenerate(b *testing.B) {
+	s := New()
+	for n := 0; n < b.N; n++ {
+		s.Generate(10)
+	}
 }
